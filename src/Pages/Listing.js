@@ -3,7 +3,12 @@ import React, { useEffect, useState } from 'react';
 
 const Listing = () => {
     const [lists, setLists] = useState([]);
-    const [value, setValue] = useState([]);
+    const [value, setValue] = useState("");
+    const [sortValue, setSortValue] = useState("");
+
+    const sortOptions = ['name', 'email', 'city']
+
+
     useEffect(() => {
         loadUsers();
     }, [])
@@ -25,6 +30,18 @@ const Listing = () => {
                 setLists(response.data);
                 setValue('');
             })
+            .catch((err) => console.log(err));
+    }
+    const handleSort = async (event) => {
+        let value = event.target.value;
+        setSortValue(value)
+        return await axios
+            .get(`https://jsonplaceholder.typicode.com/users?_sort=${value}&_order=asc`)
+            .then((response) => {
+                setLists(response.data);
+
+            })
+            .catch((err) => console.log(err));
     }
     return (
         <div>
@@ -72,7 +89,30 @@ const Listing = () => {
                     }
                 </tbody>
             </table>
+            <div className="">
+                <div className="row">
+                    <div className="col-md-6 col-sm-12">
+                        <h5>Sort By:</h5>
+                        <select
+                            onChange={handleSort}
+                            value={sortValue}
+                        >
+                            <option>Please Select </option>
+                            {
+                                sortOptions.map((sort, index) => (
+                                    <option
+                                        value={sort}
+                                        key={index}
+                                    >{sort}</option>
+                                ))}
+                        </select>
+                    </div>
 
+                    <div className="col-md-6 col-sm-12">
+                        <h5>Filter By Status</h5>
+                    </div>
+                </div>
+            </div>
 
         </div>
     );
